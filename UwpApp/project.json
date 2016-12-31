@@ -1,6 +1,6 @@
 ﻿{
   "dependencies": {
-    "DnsClient": "1.0.1-beta-1030",
+    "DnsClient": "1.0.1-beta-*",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
     "System.Threading.Timer": "4.3.0",
     "System.Diagnostics.Tools": "4.3.0",
