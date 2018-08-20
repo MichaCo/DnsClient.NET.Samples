@@ -1,11 +1,7 @@
 ﻿{
   "dependencies": {
-    "DnsClient": "1.0.3-beta-1087",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
-    "System.Diagnostics.Tools": "4.3.0",
-    "System.Globalization.Calendars": "4.3.0",
-    "System.Net.NetworkInformation": "4.3.0",
-    "System.Threading.Timer": "4.3.0"
+    "DnsClient": "1.2.0",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "6.1.7"
   },
   "frameworks": {
     "uap10.0": {}

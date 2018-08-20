@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using DnsClient;
-using Windows.Networking.Connectivity;
-using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -29,13 +20,13 @@ namespace UwpApp
         public MainPage()
         {
             this.InitializeComponent();
-            
+
             _client = new LookupClient();
             _client.EnableAuditTrail = true;
             _client.ThrowDnsErrors = false;
             _client.UseCache = false;
         }
-        
+
         private async void txtQuery_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
@@ -57,7 +48,7 @@ namespace UwpApp
             try
             {
                 var result = await _client.QueryAsync(query, QueryType.ANY);
-                
+
                 this.txtOutput.Text = result.AuditTrail;
             }
             catch (Exception ex)
@@ -69,23 +60,68 @@ namespace UwpApp
                 this.txtQuery.IsEnabled = true;
             }
         }
-        
+
         private void cmdAddresses_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            var interfaces = Interop.IpHlpApi.SystemNetworkInterface.GetAllNetworkInterfaces();
+            this.txtOutput.Text = string.Empty;
+            try
+            {
+                var fromFramework = NetworkInterface.GetAllNetworkInterfaces();
 
-            var info = Interop.IpHlpApi.FixedNetworkInformation.GetFixedNetworkInformation();
+                this.txtOutput.Text += $@"
+;; NetworkInterface.GetAllNetworkInterfaces
+{string.Join("\r\n ", fromFramework.Select(p => p.Name + "\t" + p.NetworkInterfaceType + "\t" + p.GetPhysicalAddress() + "\t" + p.OperationalStatus))}
 
-            this.txtOutput.Text = $@"
-{string.Join("\r\n ", interfaces.Select(p=>p.Name + "\t" + p.NetworkInterfaceType + "\t" + p.GetPhysicalAddress() + "\t" + p.OperationalStatus))}
-
-{info.DomainName}
-{info.HostName}
-{string.Join(", ", info.DnsAddresses.Select(p=>p.ToString()))}
+{string.Join(", ", fromFramework.Select(p => p.GetIPProperties().DnsAddresses))}
+;
 ";
+            }
+            catch (Exception ex)
+            {
+                this.txtOutput.Text += $@"
+;; NetworkInterface.GetAllNetworkInterfaces failed: {ex.Message}.
+;";
+            }
+
+            try
+            {
+                var dnsClientNameservers = NameServer.ResolveNameServers(true, false);
+                this.txtOutput.Text += $@"
+;; NameServer.ResolveNameServers
+{string.Join(", ", dnsClientNameservers)}
+;
+";
+            }
+            catch (Exception ex)
+            {
+                this.txtOutput.Text += $@"
+;; NameServer.ResolveNameServers failed: {ex.Message}.
+;";
+            }
+
+            try
+            {
+                var interfaces = Interop.IpHlpApi.SystemNetworkInterface.GetAllNetworkInterfaces();
+
+                var info = Interop.IpHlpApi.FixedNetworkInformation.GetFixedNetworkInformation();
+
+                this.txtOutput.Text += $@"
+;; Native implementation
+{string.Join("\r\n", interfaces.Select(p => p.Name + "\t" + p.NetworkInterfaceType + "\t" + p.GetPhysicalAddress() + "\t" + p.OperationalStatus))}
+;;{info.DomainName}
+;;{info.HostName}
+;;{string.Join(", ", info.DnsAddresses.Select(p => p.ToString()))}
+;";
+            }
+            catch (Exception ex)
+            {
+                this.txtOutput.Text += $@"
+;; Native implementation failed: {ex.Message}.
+;";
+            }
         }
     }
-    
+
     internal static class IPAddressParserStatics
     {
         public const int IPv4AddressBytes = 4;
