@@ -21,10 +21,12 @@ namespace UwpApp
         {
             this.InitializeComponent();
 
-            _client = new LookupClient();
-            _client.EnableAuditTrail = true;
-            _client.ThrowDnsErrors = false;
-            _client.UseCache = false;
+            _client = new LookupClient(new LookupClientOptions()
+            {
+                EnableAuditTrail = true,
+                ThrowDnsErrors = false,
+                UseCache = false
+            });
         }
 
         private async void txtQuery_KeyDown(object sender, KeyRoutedEventArgs e)
