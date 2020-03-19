@@ -7,26 +7,75 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" MinHeight="200">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*" />
+  
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions >
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Margin="5" VerticalAlignment="Top" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <TextBox x:Name="txtQuery" Height="35" Margin="5,5,5,0" TextWrapping="Wrap" Text="" 
-                     KeyDown="txtQuery_KeyDown" InputScope="Text" PlaceholderText="Enter Something..."
-                     Style="{StaticResource AutoSuggestBoxTextBoxStyle}"
-                     />
-
-                <Button x:Name="cmdQuery" Click="cmdQuery_Click" Content="Run" Style="{StaticResource PivotTitleContentControlStyle}"/>
-                <Button x:Name="cmdAddresses" Click="cmdAddresses_Click" Style="{StaticResource PivotTitleContentControlStyle}">List addresses</Button>
-            </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <AppBarElementContainer VerticalAlignment="Center" IsTabStop="False" Padding="5">
+                <TextBlock Text="Query:"  />
+            </AppBarElementContainer>
+            <AppBarElementContainer VerticalAlignment="Center" IsTabStop="False" Padding="5">
+                <TextBox 
+                    Height="33"
+                    x:Name="txtQuery" 
+                    TextWrapping="NoWrap" 
+                    Text="" 
+                    KeyDown="TxtQueryKeyDown" 
+                    InputScope="Text" 
+                    AcceptsReturn="False"
+                    IsSpellCheckEnabled="False"
+                    PlaceholderText="Enter Something..."
+                    Width="300"
+                    />
+            </AppBarElementContainer>
+            <AppBarElementContainer VerticalAlignment="Center" IsTabStop="False" Padding="5">
+                <TextBlock Text="Type:" />
+            </AppBarElementContainer>
+            <AppBarElementContainer VerticalAlignment="Center" IsTabStop="False" Padding="5">
+                <ComboBox 
+                    Height="33"
+                    x:Name="selectQueryType" 
+                    ItemsSource="{x:Bind _queryTypes}" 
+                    Width="120" 
+                    SelectionChanged="SelectQueryTypeSelectionChanged" />
+            </AppBarElementContainer>
+            <AppBarElementContainer VerticalAlignment="Center" IsTabStop="False" Padding="5">
+                <TextBlock Text="Server:" />
+            </AppBarElementContainer>
+            <AppBarElementContainer VerticalAlignment="Center" IsTabStop="False" Padding="5">
+                <TextBox
+                    Height="33"
+                    x:Name="txtServer"
+                    TextWrapping="NoWrap" 
+                    Text="" 
+                    KeyDown="TxtQueryKeyDown" 
+                    InputScope="Text" 
+                    IsSpellCheckEnabled="False"
+                    AcceptsReturn="False"
+                    PlaceholderText="(system defined)" />
+            </AppBarElementContainer>
+            <AppBarButton Icon="Next" Label="Run" x:Name="cmdQuery" Click="QueryClick" />
+            <AppBarSeparator  />
+            <AppBarButton Icon="Setting" Label="Test Servers"  x:Name="cmdAddresses" Click="AddressesClick" />
         </StackPanel>
-        <Grid Grid.Row="1" Margin="5,0,5,5">
-            <ScrollViewer>
-                <TextBlock x:Name="txtOutput" TextWrapping="Wrap" Text="Startin2dg" Style="{StaticResource BaseTextBlockStyle}" />
-            </ScrollViewer>
-        </Grid>
+        <ScrollViewer Grid.Column="0" Grid.Row="1">
+            <TextBlock 
+                    IsTextSelectionEnabled="True" 
+                    x:Name="txtOutput" 
+                    TextWrapping="Wrap" 
+                    Text="{x:Bind Path=ViewModel.QueryResult, Mode=OneWay}" 
+                    Style="{StaticResource BaseTextBlockStyle}" />
+        </ScrollViewer>
+        <ScrollViewer Grid.Column="0" Grid.Row="2" VerticalScrollMode="Enabled" x:Name="scrollLog" >
+            <TextBlock Foreground="LightGray"
+                           Text="{x:Bind Path=ViewModel.LogResult, Mode=OneWay}" x:Name="logOutput" TextWrapping="Wrap" Style="{StaticResource BaseTextBlockStyle}" />
+        </ScrollViewer>
     </Grid>
 </Page>
